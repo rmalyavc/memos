@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+
+{% load static %}
+<html>
+<head>
+	<title>Note list</title>
+	<meta charset="utf-8"/>
+	<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}" />
+</head>
+<body>
+	<form class="add_form">
+		<h3 class="table_header">Add new note</h3>
+		<input type="text" id="title_text" name="title" placeholder="Type the title here" required>
+		<input class="content_text" id="content_text" type="textarea" name="text" placeholder="Type the text here" required>
+		<div class="form_footer">
+			<button class="submit_button" id="add_note" type="button">Add note</button>
+		</div>
+	</form>
+	<h1 class="table_header">Notes table</h1>
+	<div class="container">
+		<table class="note_table" id="note_cont">
+			<tr>
+				<th>ID</th>
+				<th>Title</th>
+				<th>Text</th>
+				<th>Tools</th>
+			</tr>
+				{% for note in notes %}
+					<tr>
+						<td><strong>{{ note.id }}</strong></td>
+						<td>{{ note.title }}</td>
+						<td>{{ note.text }}</td>
+						<td><button type="button" class="del_button" id="{{ note.id }}">Delete</button></td>
+					</tr>
+				{% endfor %}
+		</table>
+	</div>
+	<script type="text/javascript">
+		function post_notes(notes) {
+			let cont = document.getElementById('note_cont');
+			console.log('Before\n' + cont);
+			cont.innerHTML = '<tr>' +
+				'<th>ID</th>' +
+				'<th>Title</th>' +
+				'<th>Text</th>' +
+				'<th>Tools</th>' +
+			'</tr>';
+			console.log('After\n' + cont.innerHTML);
+			for (let i = 0; i < notes.length; i++) {
+				let data = notes[i];
+				cont.innerHTML += '<tr>' +
+						'<td><strong>' + data['id'] + '</strong></td>' +
+						'<td>' + data['title'] + '</td>' +
+						'<td>' + data['text'] + '</td>' +
+						'<td><button type="button" class="del_button" id="' + data['id'] + '">Delete</button></td>' + 
+					'</tr>';
+			}
+			set_listeners();
+		}
+
+		function valid_input(elem, flag) {
+			let color = 'red';
+			let placeholder = 'This field is required!';
+			if (flag === true) {
+				color = 'unset';
+				if (elem.id === 'title_text')
+					placeholder = 'Type the title here';
+				else
+					placeholder = 'Type the text here';
+			}
+			elem.style['background-color'] = color;
+			elem.placeholder = placeholder;
+		}
+
+		function check_fields() {
+			let title = document.getElementById('title_text');
+			let text = document.getElementById('content_text');
+			if (title.value === '' || text.value === '') {
+				if (title.value === '')
+					valid_input(title, false);
+				if (text.value === '')
+					valid_input(text, false);
+				return (false);
+			}
+			return (true);
+		}
+
+		function save_note() {
+			let xhttp = new XMLHttpRequest();
+			let title = document.getElementById('title_text');
+			let text = document.getElementById('content_text');
+			let query = {};
+			query['title'] = title.value;
+			query['text'] = text.value;
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                	post_notes(JSON.parse(this.responseText));
+                }
+            };
+            xhttp.open("POST", "{% url 'memos:memos' %}", true);
+            xhttp.setRequestHeader("Content-type", "application/json");
+            xhttp.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
+            xhttp.send(JSON.stringify(query));
+		}
+
+		function add_note() {
+			if (!check_fields())
+				return ;
+			save_note();
+			document.getElementById('title_text').value = '';
+			document.getElementById('content_text').value = '';
+		}
+
+		function del_note() {
+			let xhttp = new XMLHttpRequest();
+			let query = {};
+			query['id'] = this.id;
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                	console.log(JSON.parse(this.responseText));
+                	post_notes(JSON.parse(this.responseText));
+                }
+            };
+            xhttp.open("POST", "{% url 'memos:memo_del' %}", true);
+            xhttp.setRequestHeader("Content-type", "application/json");
+            xhttp.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
+            xhttp.send(JSON.stringify(query));
+		}
+
+		function set_listeners() {
+			let del = document.getElementsByClassName('del_button');
+			let add = document.getElementById('add_note');
+			let input = document.getElementsByTagName('input');
+			for (let i = 0; i < del.length; i++) {
+				del[i].addEventListener('click', del_note);
+			}
+			for (let i = 0; i < input.length; i++) {
+				input[i].addEventListener('keyup', function() {
+					valid_input(this, true)
+				});
+			}
+			add.addEventListener('click', add_note);
+		}
+
+		document.addEventListener('DOMContentLoaded', function() {
+			set_listeners();
+		});
+	</script>
+</body>
+</html>
