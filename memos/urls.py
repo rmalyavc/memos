@@ -9,4 +9,4 @@ urlpatterns = [
     path('', views.Index, name='Index'),
     path('memos/', views.memos, name='memos'),
     path('memo_del/', views.memo_del, name='memo_del'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -3,7 +3,7 @@ body {
 	background-size: cover;
 	overflow-x: hidden;
 	background-repeat: no-repeat;
-	background-image: url("../media/background.jpg");
+	background-image: url("{{MEDIA_URL}}/background.jpg");
 }
 
 .add_form {
@@ -26,7 +26,7 @@ input, textarea {
 	opacity: 0.7;
 	font-size: 1rem;
 	border: none;
-	background-color: none;
+	background-color: unset;
 }
 
 .content_text {
