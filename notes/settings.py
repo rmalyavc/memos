@@ -25,7 +25,7 @@ SECRET_KEY = '&$!an)j@7kbz5(wk802ypji+jnd13=mz7lcx#z0ouu^+uj94v4'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'rmalyavc.pythonanywhere.com']
 
 
 # Application definition
@@ -120,4 +120,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = '/home/rmalyavc/notes/static'
+
+MEDIA_ROOT = '/home/rmalyavc/notes/media/'
+MEDIA_URL = '/media/'

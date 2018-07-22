@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 
 {% load static %}
+
 <html>
 <head>
 	<title>Note list</title>
@@ -11,7 +12,7 @@
 	<form class="add_form">
 		<h3 class="table_header">Add new note</h3>
 		<input type="text" id="title_text" name="title" placeholder="Type the title here" required>
-		<input class="content_text" id="content_text" type="textarea" name="text" placeholder="Type the text here" required>
+		<textarea class="content_text" id="content_text" type="textarea" name="text" placeholder="Type the text here" required></textarea>
 		<div class="form_footer">
 			<button class="submit_button" id="add_note" type="button">Add note</button>
 		</div>
@@ -52,7 +53,7 @@
 						'<td><strong>' + data['id'] + '</strong></td>' +
 						'<td>' + data['title'] + '</td>' +
 						'<td>' + data['text'] + '</td>' +
-						'<td><button type="button" class="del_button" id="' + data['id'] + '">Delete</button></td>' + 
+						'<td><button type="button" class="del_button" id="' + data['id'] + '">Delete</button></td>' +
 					'</tr>';
 			}
 			set_listeners();
@@ -130,15 +131,17 @@
 		function set_listeners() {
 			let del = document.getElementsByClassName('del_button');
 			let add = document.getElementById('add_note');
-			let input = document.getElementsByTagName('input');
+			let input = document.getElementsByTagName('input')[0];
+			let text = document.getElementsByTagName('textarea')[0];
 			for (let i = 0; i < del.length; i++) {
 				del[i].addEventListener('click', del_note);
 			}
-			for (let i = 0; i < input.length; i++) {
-				input[i].addEventListener('keyup', function() {
-					valid_input(this, true)
-				});
-			}
+			input.addEventListener('keyup', function() {
+				valid_input(this, true)
+			});
+			text.addEventListener('keyup', function() {
+				valid_input(this, true)
+			});
 			add.addEventListener('click', add_note);
 		}
 
